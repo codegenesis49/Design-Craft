@@ -3,9 +3,14 @@ import { BookOpen } from 'lucide-react';
 import { StepProps } from '../Journey';
 import { mindmapLearnTabs, LearnTab } from '../../content/mindmap';
 import { flowchartLearnTabs } from '../../content/flowchart';
+import { FlowchartSequenceExample, FlowchartSymbolGuide } from '../FlowchartLearnVisuals';
+import { visualisationLearnTabs, wireframeLearnTabs } from '../../content/layoutTools';
 
 export default function LearnStep({ moduleId, setCanContinue }: StepProps) {
-  const tabs: LearnTab[] = moduleId === 'mindmap' ? mindmapLearnTabs : flowchartLearnTabs;
+  const tabs: LearnTab[] =
+    moduleId === 'mindmap' ? mindmapLearnTabs :
+    moduleId === 'flowchart' ? flowchartLearnTabs :
+    moduleId === 'visualisation' ? visualisationLearnTabs : wireframeLearnTabs;
   const [active, setActive] = useState(tabs[0].id);
   const [visited, setVisited] = useState<Set<string>>(() => new Set([tabs[0].id]));
 
@@ -15,7 +20,7 @@ export default function LearnStep({ moduleId, setCanContinue }: StepProps) {
   return (
     <div className="card card-pad">
       <div className="eyebrow"><BookOpen size={12} style={{ verticalAlign: '-1px' }} /> Read and Learn</div>
-      <h2>{moduleId === 'mindmap' ? 'Mind maps' : 'Flowcharts'}: what, when and why</h2>
+      <h2>{moduleId === 'mindmap' ? 'Mind maps' : moduleId === 'flowchart' ? 'Flowcharts' : moduleId === 'visualisation' ? 'Visualisation diagrams' : 'Wireframes'}: what, when and why</h2>
       <p className="muted small">Work through each section below. Short sections, no walls of text — take what you need into the builder.</p>
       <div className="tabs" role="tablist" aria-label="Learning sections">
         {tabs.map((t) => (
@@ -36,6 +41,8 @@ export default function LearnStep({ moduleId, setCanContinue }: StepProps) {
             {b.heading && <h3>{b.heading}</h3>}
             {b.text && <p>{b.text}</p>}
             {b.bullets && <ul>{b.bullets.map((x, j) => <li key={j}>{x}</li>)}</ul>}
+            {b.visual === 'flowchart-symbols' && <FlowchartSymbolGuide />}
+            {b.visual === 'flowchart-sequence' && <FlowchartSequenceExample />}
             {b.note && <div className="note">{b.note}</div>}
           </div>
         ))}

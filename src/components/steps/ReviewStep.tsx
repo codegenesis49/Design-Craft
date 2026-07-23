@@ -4,6 +4,7 @@ import { StepProps } from '../Journey';
 import { validateMindmap } from '../../logic/validateMindmap';
 import { validateFlowchart } from '../../logic/validateFlowchart';
 import { ChecklistPanel } from '../builderShared';
+import { validateLayout } from '../../logic/validateLayout';
 
 const HOSPITAL_MODEL_FLOW = [
   'Start (terminator)',
@@ -30,13 +31,15 @@ const HOSPITAL_MODEL_MAP = [
   'Hardware — touchscreen kiosk, receipt printer, speaker',
   'Security — no personal data left on screen, session timeout',
 ];
+const HOSPITAL_MODEL_VIS = ['Heading: Find your hospital appointment','Calm blue and teal colour theme','Photograph or hospital graphic','Short instructions in large, readable text','Clearly positioned call to action','Annotations for font sizes, image size, colours and spacing'];
+const HOSPITAL_MODEL_WIRE = ['Hospital logo and screen title','Short accessible instructions','Appointment reference input','Date of birth input','Find appointment button','Clear or Back button','Help and accessibility controls','Area for results and confirmation'];
 
 export default function ReviewStep({ moduleId, record, update, setCanContinue }: StepProps) {
   const art = record.artifactData ?? { nodes: [], edges: [] };
   const results = useMemo(
     () => (moduleId === 'mindmap'
       ? validateMindmap(art, record.selectedMindMapType ?? 'library')
-      : validateFlowchart(art)),
+      : moduleId === 'flowchart' ? validateFlowchart(art) : validateLayout(art,moduleId)),
     [art, moduleId, record.selectedMindMapType]
   );
   const [showModel, setShowModel] = useState(false);
@@ -70,7 +73,7 @@ export default function ReviewStep({ moduleId, record, update, setCanContinue }:
               <strong>One good answer</strong> (there are many): compare the structure with yours — don’t copy it word for word.
             </p>
             <ul className="small" style={{ marginBottom: 0 }}>
-              {(moduleId === 'mindmap' ? HOSPITAL_MODEL_MAP : HOSPITAL_MODEL_FLOW).map((l, i) => <li key={i}>{l}</li>)}
+              {(moduleId === 'mindmap' ? HOSPITAL_MODEL_MAP : moduleId === 'flowchart' ? HOSPITAL_MODEL_FLOW : moduleId === 'visualisation' ? HOSPITAL_MODEL_VIS : HOSPITAL_MODEL_WIRE).map((l, i) => <li key={i}>{l}</li>)}
             </ul>
           </div>
         )}

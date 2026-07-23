@@ -19,6 +19,8 @@ export default function App() {
           <Link className="btn btn-ghost btn-sm" to="/">Dashboard</Link>
           <Link className="btn btn-ghost btn-sm" to="/lab/mindmap">Mind Maps</Link>
           <Link className="btn btn-ghost btn-sm" to="/lab/flowchart">Flowcharts</Link>
+          <Link className="btn btn-ghost btn-sm" to="/lab/visualisation">Visualisation</Link>
+          <Link className="btn btn-ghost btn-sm" to="/lab/wireframe">Wireframes</Link>
         </nav>
       </header>
       <main className="main">
@@ -26,6 +28,8 @@ export default function App() {
           <Route path="/" element={<Dashboard />} />
           <Route path="/lab/mindmap" element={<Journey moduleId="mindmap" />} />
           <Route path="/lab/flowchart" element={<Journey moduleId="flowchart" />} />
+          <Route path="/lab/visualisation" element={<Journey moduleId="visualisation" />} />
+          <Route path="/lab/wireframe" element={<Journey moduleId="wireframe" />} />
           <Route path="/evidence/:moduleId" element={<Evidence />} />
         </Routes>
       </main>

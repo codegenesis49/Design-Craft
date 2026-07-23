@@ -10,7 +10,9 @@ describe('App smoke tests', () => {
     render(<MemoryRouter><Dashboard /></MemoryRouter>);
     expect(screen.getByText('Mind Maps')).toBeTruthy();
     expect(screen.getByText('Flowcharts')).toBeTruthy();
-    expect(screen.getAllByText('Coming later').length).toBeGreaterThanOrEqual(3);
+    expect(screen.getByText('Visualisation Diagrams')).toBeTruthy();
+    expect(screen.getByText('Wireframes')).toBeTruthy();
+    expect(screen.getAllByText('Coming later').length).toBeGreaterThanOrEqual(1);
     expect(screen.getByText(/hospital self-service appointment system/i)).toBeTruthy();
   });
 
@@ -29,5 +31,15 @@ describe('App smoke tests', () => {
   it('renders the flowchart journey and its quick check gating', () => {
     render(<MemoryRouter><Journey moduleId="flowchart" /></MemoryRouter>);
     expect(screen.getByText(/steps, processing and decisions/i)).toBeTruthy();
+
+    fireEvent.click(screen.getByRole('tab', { name: /What is sequence/ }));
+    expect(screen.getByText(/Sequence is the order in which instructions or actions happen/)).toBeTruthy();
+    expect(screen.getByLabelText(/Example sequence: Start/)).toBeTruthy();
+
+    fireEvent.click(screen.getByRole('tab', { name: /Components/ }));
+    expect(screen.getByLabelText('Flowchart symbols and their meanings')).toBeTruthy();
+    expect(screen.getByText('Start / End')).toBeTruthy();
+    expect(screen.getByText('Input / Output')).toBeTruthy();
+    expect(screen.getByText('Decision labels')).toBeTruthy();
   });
 });

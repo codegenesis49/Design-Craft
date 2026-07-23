@@ -6,16 +6,17 @@ import { dataService } from '../data/dataService';
 import { ModuleId, PROJECT_BRIEF } from '../types';
 import { MindNode } from './MindMapBuilder';
 import { FcNode } from './FlowchartBuilder';
+import { LayoutNode } from './LayoutBuilder';
 import { CheckIcon } from './builderShared';
 import { masteryLevel } from '../logic/quiz';
 
-const nodeTypes = { mind: MindNode, fc: FcNode };
+const nodeTypes = { mind: MindNode, fc: FcNode, layout: LayoutNode };
 
 export default function Evidence() {
   const { moduleId } = useParams<{ moduleId: ModuleId }>();
   const record = useMemo(() => dataService.load((moduleId as ModuleId) ?? 'mindmap'), [moduleId]);
   const art = record.artifactData ?? { nodes: [], edges: [] };
-  const toolName = record.moduleId === 'mindmap' ? 'Mind map' : 'Flowchart';
+  const toolName = record.selectedTool;
   const typeName = record.selectedMindMapType
     ? record.selectedMindMapType === 'tunnel' ? 'Tunnel Timeline' : record.selectedMindMapType[0].toUpperCase() + record.selectedMindMapType.slice(1)
     : null;

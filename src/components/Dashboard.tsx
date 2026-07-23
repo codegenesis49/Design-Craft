@@ -17,11 +17,21 @@ const AVAILABLE = [
     icon: <GitBranch size={22} />,
     desc: 'Plan a process with standard symbols — sequence, decisions, inputs, outputs and labelled routes.',
   },
+  {
+    id: 'visualisation' as const,
+    title: 'Visualisation Diagrams',
+    icon: <Image size={22} />,
+    desc: 'Sketch how a static product will look, including its layout, text, images, colours and annotations.',
+  },
+  {
+    id: 'wireframe' as const,
+    title: 'Wireframes',
+    icon: <LayoutTemplate size={22} />,
+    desc: 'Plan what a screen contains and where each element will go using low- or high-fidelity layouts.',
+  },
 ];
 
 const UPCOMING = [
-  { title: 'Wireframes', icon: <LayoutTemplate size={22} />, desc: 'Plan the position of every button, field and content block on a screen.' },
-  { title: 'Visualisation Diagrams', icon: <Image size={22} />, desc: 'Show the proposed content, layout and visual details of a finished product.' },
   { title: 'Mood Boards', icon: <Palette size={22} />, desc: 'Explore colours, fonts, imagery and the visual theme of a solution.' },
 ];
 

@@ -94,11 +94,32 @@ function FlowchartExample() {
     </svg>
   );
 }
+function LayoutExample({wireframe}:{wireframe:boolean}) {
+  return (
+    <svg viewBox="0 0 760 430" role="img" aria-label={wireframe?'Worked high-fidelity wireframe for a library search kiosk':'Worked visualisation diagram for a library event poster'} className="worked-layout">
+      <rect x="70" y="35" width="620" height="350" rx="10" fill="#fff" stroke="#8b93a7" strokeWidth="2"/>
+      {wireframe ? <>
+        <rect x="70" y="35" width="620" height="62" rx="10" fill="#edf0f8"/><text x="100" y="74" fontWeight="700" fontSize="20">LIBRARY SEARCH</text>
+        <rect x="120" y="128" width="520" height="58" rx="8" fill="#fff" stroke="#8b93a7"/><text x="140" y="163" fill="#4a5268">Book title or author</text>
+        <rect x="120" y="205" width="245" height="54" rx="8" fill="#3d5ae0"/><text x="242" y="239" textAnchor="middle" fill="#fff" fontWeight="700">Search</text>
+        <rect x="395" y="205" width="245" height="54" rx="8" fill="#fff" stroke="#3d5ae0"/><text x="517" y="239" textAnchor="middle" fill="#2b41ad" fontWeight="700">Clear</text>
+        <rect x="120" y="290" width="520" height="60" rx="8" fill="#f6f7fa"/><text x="145" y="326">Results and shelf location appear here</text>
+      </> : <>
+        <rect x="70" y="35" width="620" height="95" rx="10" fill="#263b7a"/><text x="380" y="78" textAnchor="middle" fill="#fff" fontWeight="700" fontSize="28">READING FESTIVAL</text><text x="380" y="105" textAnchor="middle" fill="#dbe4ff">Discover a new story</text>
+        <rect x="105" y="160" width="220" height="150" fill="#e4f4f1" stroke="#0e8a7b"/><path d="M105 310L185 225l50 50 38-42 52 77" fill="none" stroke="#0e8a7b" strokeWidth="3"/><text x="215" y="335" textAnchor="middle" fontSize="12">Large event photograph</text>
+        <text x="375" y="182" fontWeight="700" fontSize="21">Saturday 18 October</text><text x="375" y="220">Author talks · Book swap · Workshops</text><rect x="375" y="250" width="230" height="55" rx="8" fill="#f2a93b"/><text x="490" y="284" textAnchor="middle" fontWeight="700">BOOK YOUR PLACE</text>
+        <line x1="630" y1="275" x2="704" y2="245" stroke="#b45309"/><text x="574" y="360" fontSize="12" fill="#7c3a04">Annotation: orange button, 18pt bold</text>
+      </>}
+    </svg>
+  );
+}
 
 export default function WorkedExampleStep({ moduleId, setCanContinue }: StepProps) {
   useEffect(() => { setCanContinue(true); }, [setCanContinue]);
   const [showNotes, setShowNotes] = useState(true);
   const mindmap = moduleId === 'mindmap';
+  const layout = moduleId === 'visualisation' || moduleId === 'wireframe';
+  const wireframe = moduleId === 'wireframe';
   const notes = mindmap
     ? [
         'One clear central topic sits in the middle — everything grows from it.',
@@ -106,7 +127,17 @@ export default function WorkedExampleStep({ moduleId, setCanContinue }: StepProp
         'Each category is developed with keyword sub-nodes, never full sentences.',
         'Each branch has its own colour, so groups are easy to tell apart at a glance.',
       ]
-    : [
+    : layout ? (wireframe ? [
+        'The screen contains a heading, search field, actions and a clearly labelled results area.',
+        'The layout follows the order a user will work through the screen.',
+        'Realistic text, colour and button styling make this a high-fidelity example.',
+        'Every element has a purpose; the wireframe does not attempt to show process logic.',
+      ] : [
+        'The sketch shows the proposed appearance of one static poster.',
+        'Text, image, colour and position are easy for a client to understand.',
+        'The annotation explains a design choice instead of leaving it open to interpretation.',
+        'It communicates layout and visual theme, not a process or timeline.',
+      ]) : [
         'The process opens and closes with rounded terminators — one Start, one End.',
         'Data going in or out (welcome screen, booking code, tickets) uses parallelograms; system actions use rectangles.',
         'The diamond asks one question, and both routes leaving it are labelled Yes and No.',
@@ -115,12 +146,12 @@ export default function WorkedExampleStep({ moduleId, setCanContinue }: StepProp
   return (
     <div className="card card-pad">
       <div className="eyebrow"><Eye size={12} style={{ verticalAlign: '-1px' }} /> Worked example</div>
-      <h2>{mindmap ? 'A Library mind map, done well' : 'A complete flowchart, done well'}</h2>
+      <h2>{mindmap ? 'A Library mind map, done well' : layout ? `A ${wireframe?'high-fidelity wireframe':'visualisation diagram'}, done well` : 'A complete flowchart, done well'}</h2>
       <p className="muted small">
-        This example uses a <strong>different brief</strong> — {mindmap ? 'a school library search kiosk' : 'a cinema ticket kiosk'} — so the
+        This example uses a <strong>different brief</strong> — {mindmap ? 'a school library search kiosk' : layout ? (wireframe?'a library search kiosk':'a library event poster') : 'a cinema ticket kiosk'} — so the
         hospital design stays yours to create. Study the structure, not the content.
       </p>
-      {mindmap ? <MindmapExample /> : <FlowchartExample />}
+      {mindmap ? <MindmapExample /> : layout ? <LayoutExample wireframe={wireframe}/> : <FlowchartExample />}
       <div style={{ marginTop: 14 }}>
         <button className="btn btn-secondary btn-sm" onClick={() => setShowNotes((s) => !s)} aria-expanded={showNotes}>
           {showNotes ? 'Hide' : 'Show'} what makes this example work

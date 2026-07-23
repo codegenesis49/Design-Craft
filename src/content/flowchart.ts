@@ -29,21 +29,30 @@ export const flowchartLearnTabs: LearnTab[] = [
     ],
   },
   {
+    id: 'sequence',
+    title: 'What is sequence?',
+    blocks: [
+      {
+        text: 'Sequence is the order in which instructions or actions happen. In a simple sequence, each step is completed once and the next step follows in order.',
+      },
+      {
+        heading: 'A simple sequence',
+        visual: 'flowchart-sequence',
+      },
+      {
+        note: 'Follow the arrows from Start: enter the appointment reference → check the reference → display the result → End. A decision can later split this sequence into different routes, and a loop can send the flow back to repeat a step.',
+      },
+    ],
+  },
+  {
     id: 'components',
     title: 'Components',
     blocks: [
       {
         heading: 'Core assessed components',
-        bullets: [
-          'Start/End (terminator) — rounded rectangle or oval marking where the process begins and ends',
-          'Process — rectangle for an action or calculation',
-          'Decision — diamond for a question with alternative routes',
-          'Input/Output — parallelogram for data entering or leaving the system',
-          'Flow line — directional arrow showing the order of steps',
-          'Yes/No or True/False labels on the routes leaving a decision',
-        ],
+        visual: 'flowchart-symbols',
       },
-      { text: 'An optional connector (small circle) can link sections of larger diagrams, but the five core components above are the ones OCR assesses.' },
+      { text: 'An optional connector (small circle) can link sections of a larger diagram. The five core components are Start/End, Process, Decision, Input/Output and Flow Line. Yes/No or True/False labels explain the routes leaving a decision.' },
     ],
   },
   {

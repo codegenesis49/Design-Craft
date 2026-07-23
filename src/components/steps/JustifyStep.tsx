@@ -7,7 +7,7 @@ const QUESTIONS: { key: keyof JustificationAnswers; label: string; keywords: str
   {
     key: 'suitable',
     label: '1. Why was this design tool suitable?',
-    keywords: ['organises', 'categories', 'central theme', 'connects ideas', 'sequence', 'decision', 'routes', 'standard symbols', 'paths towards a solution', 'audience'],
+    keywords: ['organises', 'categories', 'central theme', 'connects ideas', 'sequence', 'decision', 'routes', 'standard symbols', 'paths towards a solution', 'audience', 'screen layout', 'static product', 'visual appearance', 'placeholders'],
   },
   {
     key: 'helped',
@@ -17,7 +17,7 @@ const QUESTIONS: { key: keyof JustificationAnswers; label: string; keywords: str
   {
     key: 'limitation',
     label: '3. Give one limitation of the tool.',
-    keywords: ['crowded', 'hard for others to understand', 'not enough detail', 'no interface layout', 'complicated', 'symbols must be understood', 'crossing lines'],
+    keywords: ['crowded', 'hard for others to understand', 'not enough detail', 'no interface layout', 'complicated', 'symbols must be understood', 'crossing lines', 'cannot show full interaction', 'may be misinterpreted', 'can become over-designed'],
   },
   {
     key: 'next',

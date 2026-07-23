@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { validateLayout } from '../logic/validateLayout';
 import { ArtifactData } from '../types';
 import { validateMindmap, checklistPassed } from '../logic/validateMindmap';
 import { validateFlowchart, smartSymbolFeedback, checklistPassed as fcPassed } from '../logic/validateFlowchart';
@@ -176,5 +177,30 @@ describe('Flowchart validation', () => {
   it('suggests a Process symbol for an action in a decision diamond', () => {
     const smart = smartSymbolFeedback({ nodes: [fc('d1', 'decision', 'Display the appointment')], edges: [] });
     expect(smart.some((r) => r.message.includes('process rectangle'))).toBe(true);
+  });
+});
+
+describe('Layout-tool validation', () => {
+  const node = (id: string, kind: string, label: string) => ({
+    id, type: 'layout', position: { x: 0, y: 0 }, data: { kind, label },
+  });
+  it('checks visualisation content, images, annotations and theme separately', () => {
+    const art: ArtifactData = { nodes: [
+      node('h','heading','Find your appointment'), node('t','text','Short instructions'),
+      node('i','image','Hospital image'), node('a1','annotation','Heading 28pt bold'),
+      node('a2','annotation','Image aligned left'), node('c','colour','Calm blue theme'),
+    ], edges: [] };
+    expect(validateLayout(art, 'visualisation').every(r => r.status !== 'fail')).toBe(true);
+  });
+  it('requires useful annotations in a visualisation diagram', () => {
+    const art: ArtifactData = { nodes: [node('h','heading','Title'),node('t','text','Text'),node('i','image','Image'),node('c','colour','Blue'),node('x','text','More')], edges: [] };
+    expect(validateLayout(art,'visualisation').find(r=>r.id==='annotation')?.status).toBe('fail');
+  });
+  it('checks wireframe inputs, actions and screen structure', () => {
+    const art: ArtifactData = { nodes: [
+      node('h','heading','Appointments'),node('i1','input','Reference'),node('i2','input','Date of birth'),
+      node('b1','button','Find'),node('b2','button','Clear'),node('n','nav','Help'),node('im','image','Logo'),
+    ], edges: [] };
+    expect(validateLayout(art,'wireframe').every(r=>r.status!=='fail')).toBe(true);
   });
 });

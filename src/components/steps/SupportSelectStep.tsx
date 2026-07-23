@@ -31,13 +31,14 @@ const LEVELS: { id: SupportLevel; name: string; icon: JSX.Element; points: strin
   },
 ];
 
-export default function SupportSelectStep({ record, update, setCanContinue }: StepProps) {
+export default function SupportSelectStep({ record, update, setCanContinue, moduleId }: StepProps) {
   useEffect(() => { setCanContinue(record.supportLevel != null); }, [record.supportLevel, setCanContinue]);
   return (
     <div className="card card-pad">
       <div className="eyebrow">Support level</div>
       <h2>How much support would you like?</h2>
       <p className="muted small">Pick the level that fits how confident you feel. Your choice is recorded in your saved evidence.</p>
+      {(moduleId === 'wireframe' || moduleId === 'visualisation') && <div className="note small">In Guided mode, the element palette and live checklist explain what to add. The tool gives support but does not complete the design for you.</div>}
       <div className="choice-grid">
         {LEVELS.map((l) => (
           <button

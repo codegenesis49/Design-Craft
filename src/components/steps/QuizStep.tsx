@@ -5,6 +5,7 @@ import { mindmapQuiz } from '../../content/mindmap';
 import { flowchartQuiz } from '../../content/flowchart';
 import { prepareQuiz, scoreQuiz, masteryLevel, topicsToRevisit, improvement } from '../../logic/quiz';
 import { AttemptResult, QuizQuestion } from '../../types';
+import { visualisationQuiz, wireframeQuiz } from '../../content/layoutTools';
 
 function ScoreRing({ score, total }: { score: number; total: number }) {
   const pct = Math.round((score / total) * 100);
@@ -94,7 +95,7 @@ function AttemptReview({ bank, attempt, heading }: { bank: QuizQuestion[]; attem
 }
 
 export default function QuizStep({ moduleId, record, update, setCanContinue }: StepProps) {
-  const bank = moduleId === 'mindmap' ? mindmapQuiz : flowchartQuiz;
+  const bank = moduleId === 'mindmap' ? mindmapQuiz : moduleId === 'flowchart' ? flowchartQuiz : moduleId === 'visualisation' ? visualisationQuiz : wireframeQuiz;
   const [seed] = useState(() => Math.floor(Math.random() * 1e9));
   const [retrying, setRetrying] = useState(false);
   const [view, setView] = useState<'first' | 'retry'>('retry');
@@ -119,7 +120,7 @@ export default function QuizStep({ moduleId, record, update, setCanContinue }: S
     <div className="card card-pad">
       <div className="eyebrow"><GraduationCap size={12} style={{ verticalAlign: '-1px' }} /> Knowledge check</div>
 
-      {!firstScore && <AttemptForm bank={bank} seed={seed} onSubmit={submitFirst} title={`${moduleId === 'mindmap' ? 'Mind maps' : 'Flowcharts'}: knowledge check`} />}
+      {!firstScore && <AttemptForm bank={bank} seed={seed} onSubmit={submitFirst} title={`${moduleId === 'mindmap' ? 'Mind maps' : moduleId === 'flowchart' ? 'Flowcharts' : moduleId === 'visualisation' ? 'Visualisation diagrams' : 'Wireframes'}: knowledge check`} />}
 
       {firstScore && retrying && <AttemptForm bank={bank} seed={seed + 1} onSubmit={submitRetry} title="Retry: knowledge check" />}
 

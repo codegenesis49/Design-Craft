@@ -13,7 +13,7 @@ export interface DataService {
 }
 
 const KEY_PREFIX = 'designcraft.v1.';
-const MODULES: ModuleId[] = ['mindmap', 'flowchart'];
+const MODULES: ModuleId[] = ['mindmap', 'flowchart', 'visualisation', 'wireframe'];
 
 /** Minimal storage shape so the service can be unit-tested without a browser. */
 export interface KVStore {

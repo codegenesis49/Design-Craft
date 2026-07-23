@@ -3,6 +3,7 @@ import { ReactFlowProvider } from '@xyflow/react';
 import { StepProps } from '../Journey';
 import MindMapBuilder from '../MindMapBuilder';
 import FlowchartBuilder from '../FlowchartBuilder';
+import LayoutBuilder from '../LayoutBuilder';
 
 export default function BuildStep({ moduleId, record, update, setCanContinue }: StepProps) {
   const [status, setStatus] = useState({ nodeCount: 0, passed: false });
@@ -28,7 +29,9 @@ export default function BuildStep({ moduleId, record, update, setCanContinue }: 
     <ReactFlowProvider>
       {moduleId === 'mindmap'
         ? <MindMapBuilder record={record} update={update} onStatus={setStatus} />
-        : <FlowchartBuilder record={record} update={update} onStatus={setStatus} />}
+        : moduleId === 'flowchart'
+          ? <FlowchartBuilder record={record} update={update} onStatus={setStatus} />
+          : <LayoutBuilder moduleId={moduleId} record={record} update={update} onStatus={setStatus} />}
       {record.supportLevel === 'guided' && !status.passed && (
         <p className="small muted no-print" style={{ margin: '8px 2px 0' }}>
           Guided mode: the Continue button unlocks once your design meets the essential checklist requirements shown on the right.

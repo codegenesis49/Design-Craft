@@ -5,6 +5,7 @@ export interface LearnBlock {
   text?: string;
   bullets?: string[];
   note?: string;
+  visual?: 'flowchart-symbols' | 'flowchart-sequence';
 }
 export interface LearnTab {
   id: string;

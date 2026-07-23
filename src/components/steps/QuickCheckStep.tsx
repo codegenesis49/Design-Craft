@@ -3,9 +3,10 @@ import { ListChecks } from 'lucide-react';
 import { StepProps } from '../Journey';
 import { mindmapQuickCheck, QuickQuestion } from '../../content/mindmap';
 import { flowchartQuickCheck } from '../../content/flowchart';
+import { visualisationQuickCheck, wireframeQuickCheck } from '../../content/layoutTools';
 
 export default function QuickCheckStep({ moduleId, record, update, setCanContinue }: StepProps) {
-  const questions: QuickQuestion[] = moduleId === 'mindmap' ? mindmapQuickCheck : flowchartQuickCheck;
+  const questions: QuickQuestion[] = moduleId === 'mindmap' ? mindmapQuickCheck : moduleId === 'flowchart' ? flowchartQuickCheck : moduleId === 'visualisation' ? visualisationQuickCheck : wireframeQuickCheck;
   const [answers, setAnswers] = useState<Record<string, number>>({});
 
   const allAnswered = questions.every((q) => answers[q.id] !== undefined);

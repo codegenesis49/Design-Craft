@@ -1,4 +1,4 @@
-export type ModuleId = 'mindmap' | 'flowchart';
+export type ModuleId = 'mindmap' | 'flowchart' | 'visualisation' | 'wireframe';
 export type SupportLevel = 'guided' | 'supported' | 'independent';
 export type MindMapType = 'library' | 'tunnel' | 'presentation';
 export type CheckStatus = 'pass' | 'warn' | 'fail';
@@ -94,7 +94,10 @@ export function newRecord(moduleId: ModuleId): SavedRecord {
     projectId: PROJECT_ID,
     moduleId,
     lessonId: `${moduleId}-r050-ta1`,
-    selectedTool: moduleId === 'mindmap' ? 'Mind map' : 'Flowchart',
+    selectedTool:
+      moduleId === 'mindmap' ? 'Mind map' :
+      moduleId === 'flowchart' ? 'Flowchart' :
+      moduleId === 'visualisation' ? 'Visualisation diagram' : 'Wireframe',
     selectedMindMapType: null,
     supportLevel: null,
     artifactData: null,
