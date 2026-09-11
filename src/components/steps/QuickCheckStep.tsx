@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { GlossaryText } from '../Glossary';
 import { ListChecks } from 'lucide-react';
 import { StepProps } from '../Journey';
 import { mindmapQuickCheck, QuickQuestion } from '../../content/mindmap';
@@ -7,7 +8,7 @@ import { visualisationQuickCheck, wireframeQuickCheck } from '../../content/layo
 
 export default function QuickCheckStep({ moduleId, record, update, setCanContinue }: StepProps) {
   const questions: QuickQuestion[] = moduleId === 'mindmap' ? mindmapQuickCheck : moduleId === 'flowchart' ? flowchartQuickCheck : moduleId === 'visualisation' ? visualisationQuickCheck : wireframeQuickCheck;
-  const [answers, setAnswers] = useState<Record<string, number>>({});
+  const [answers, setAnswers] = useState<Record<string, number>>(record.quickCheckAnswers ?? {});
 
   const allAnswered = questions.every((q) => answers[q.id] !== undefined);
   useEffect(() => {
@@ -36,7 +37,7 @@ export default function QuickCheckStep({ moduleId, record, update, setCanContinu
                   key={oi}
                   className={cls}
                   disabled={answered}
-                  onClick={() => setAnswers((a) => ({ ...a, [q.id]: oi }))}
+                  onClick={() => {const next={...answers,[q.id]:oi};setAnswers(next);update({quickCheckAnswers:next});}}
                 >
                   {opt}
                 </button>
@@ -44,7 +45,7 @@ export default function QuickCheckStep({ moduleId, record, update, setCanContinu
             })}
             {answered && (
               <div className={`feedback ${chosen === q.answer ? 'good' : 'bad'}`}>
-                {chosen === q.answer ? 'Correct. ' : 'Not quite. '}{q.feedback}
+                {chosen === q.answer ? 'Correct. ' : 'Not quite. '}<GlossaryText text={q.feedback}/>
               </div>
             )}
           </fieldset>

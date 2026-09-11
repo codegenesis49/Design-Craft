@@ -1,3 +1,4 @@
+import { GlossaryContent } from '../Glossary';
 import { useEffect } from 'react';
 import { Compass, LifeBuoy, Rocket } from 'lucide-react';
 import { StepProps } from '../Journey';
@@ -34,7 +35,7 @@ const LEVELS: { id: SupportLevel; name: string; icon: JSX.Element; points: strin
 export default function SupportSelectStep({ record, update, setCanContinue, moduleId }: StepProps) {
   useEffect(() => { setCanContinue(record.supportLevel != null); }, [record.supportLevel, setCanContinue]);
   return (
-    <div className="card card-pad">
+    <GlossaryContent><div className="card card-pad">
       <div className="eyebrow">Support level</div>
       <h2>How much support would you like?</h2>
       <p className="muted small">Pick the level that fits how confident you feel. Your choice is recorded in your saved evidence.</p>
@@ -56,6 +57,6 @@ export default function SupportSelectStep({ record, update, setCanContinue, modu
           </button>
         ))}
       </div>
-    </div>
+    </div></GlossaryContent>
   );
 }

@@ -1,3 +1,4 @@
+import { GlossaryContent } from '../Glossary';
 import { useEffect, useState } from 'react';
 import { PenLine } from 'lucide-react';
 import { StepProps } from '../Journey';
@@ -57,7 +58,7 @@ export default function JustifyStep({ record, update, setCanContinue, moduleId }
     setAnswers((a) => ({ ...a, [key]: value }));
 
   return (
-    <div className="card card-pad">
+    <GlossaryContent><div className="card card-pad">
       <div className="eyebrow"><PenLine size={12} style={{ verticalAlign: '-1px' }} /> Exam practice</div>
       <h2>Explain why your tool was suitable</h2>
       <p className="muted small">
@@ -92,6 +93,6 @@ export default function JustifyStep({ record, update, setCanContinue, moduleId }
         );
       })}
       {!complete && <p className="small muted">Answer all four questions (a couple of sentences each) to continue.</p>}
-    </div>
+    </div></GlossaryContent>
   );
 }

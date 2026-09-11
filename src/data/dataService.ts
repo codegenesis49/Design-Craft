@@ -30,6 +30,7 @@ export class MemoryStore implements KVStore {
 }
 
 export class LocalStorageDataService implements DataService {
+  private unsaved = new Map<ModuleId, SavedRecord>();
   constructor(private store: KVStore) {}
 
   private key(moduleId: ModuleId) {
@@ -37,6 +38,7 @@ export class LocalStorageDataService implements DataService {
   }
 
   load(moduleId: ModuleId): SavedRecord {
+    if (this.unsaved.has(moduleId)) return this.unsaved.get(moduleId)!;
     const raw = this.store.getItem(this.key(moduleId));
     if (!raw) return newRecord(moduleId);
     try {
@@ -57,11 +59,21 @@ export class LocalStorageDataService implements DataService {
       completionStatus:
         record.completionStatus === 'complete' ? 'complete' : 'in-progress',
     };
-    this.store.setItem(this.key(record.moduleId), JSON.stringify(updated));
+    try {
+      const old=this.store.getItem(this.key(record.moduleId));
+      if(old){let incompatible=false;try{incompatible=JSON.parse(old).schemaVersion!==1;}catch{incompatible=true;}if(incompatible)this.store.setItem(`${this.key(record.moduleId)}.recovery.${Date.now()}`,old);}
+      this.store.setItem(this.key(record.moduleId), JSON.stringify(updated));
+      this.unsaved.delete(record.moduleId);
+      if(typeof window!=='undefined')window.dispatchEvent(new CustomEvent('designcraft-storage-warning',{detail:this.unsaved.size?'Some lesson changes are not saved. Download the open lesson records before leaving.':''}));
+    } catch {
+      this.unsaved.set(record.moduleId,updated);
+      if(typeof window!=='undefined')window.dispatchEvent(new CustomEvent('designcraft-storage-warning',{detail:'Browser saving failed. Current lesson work is only in this open page. Download it before leaving.'}));
+    }
     return updated;
   }
 
   reset(moduleId: ModuleId): SavedRecord {
+    this.unsaved.delete(moduleId);
     this.store.removeItem(this.key(moduleId));
     return newRecord(moduleId);
   }
@@ -72,7 +84,9 @@ export class LocalStorageDataService implements DataService {
 }
 
 function resolveStore(): KVStore {
-  if (typeof window !== 'undefined' && window.localStorage) return window.localStorage;
+  if (typeof window !== 'undefined') {
+    return {getItem:(k)=>{try{return window.localStorage.getItem(k);}catch{return null;}},setItem:(k,v)=>window.localStorage.setItem(k,v),removeItem:(k)=>window.localStorage.removeItem(k)};
+  }
   return new MemoryStore();
 }
 

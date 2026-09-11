@@ -109,11 +109,8 @@ export default function FlowchartBuilder({ record, update, onStatus }: Props) {
   useEffect(() => {
     onStatus({ nodeCount: nodes.length, passed: checklistPassed(results) });
     setSaveState('saving');
-    const t = setTimeout(() => {
-      update({ artifactData: { nodes: nodes as any, edges: edges as any } });
-      setSaveState('saved');
-    }, 700);
-    return () => clearTimeout(t);
+    update({ artifactData: { nodes: nodes as any, edges: edges as any } });
+    setSaveState('saved');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [nodes, edges]);
 
@@ -209,7 +206,7 @@ export default function FlowchartBuilder({ record, update, onStatus }: Props) {
       <div className="builder" ref={wrapRef}>
         <aside className="builder-left" aria-label="Brief and symbol library">
           <div className="panel-h">Project brief</div>
-          <p className="small muted">{PROJECT_BRIEF}</p>
+          <p className="small muted">{record.customBrief ?? PROJECT_BRIEF}</p>
           <p className="small muted">Plan the process a patient follows to find and confirm an appointment at the kiosk.</p>
           <div className="panel-h">Symbol library</div>
           {PALETTE.map((p) => (

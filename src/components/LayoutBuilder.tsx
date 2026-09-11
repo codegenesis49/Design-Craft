@@ -47,7 +47,7 @@ export default function LayoutBuilder({moduleId,record,update,onStatus}:{moduleI
     commit();
     setNodes(ns=>[...ns,{id:`layout-${Date.now()}-${Math.random()}`,type:'layout',position:pos??{x:180+ns.length*18,y:100+ns.length*22},data:{kind,label:LABELS[kind],colour:kind==='colour'?'#dbe4ff':''},style:{width:kind==='heading'?300:kind==='text'?260:kind==='image'?220:kind==='input'?260:kind==='button'?150:kind==='nav'?170:220}}]);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[setNodes]);
+  },[setNodes,nodes,history]);
   const onDragStart=(e:DragEvent,kind:Kind)=>{e.dataTransfer.setData('application/designcraft-kind',kind);e.dataTransfer.effectAllowed='copy';};
   const onDrop=(e:DragEvent)=>{e.preventDefault();const k=e.dataTransfer.getData('application/designcraft-kind') as Kind;if(k)add(k,screenToFlowPosition({x:e.clientX,y:e.clientY}));};
   const save=useCallback(()=>{
@@ -55,7 +55,7 @@ export default function LayoutBuilder({moduleId,record,update,onStatus}:{moduleI
     update({artifactData:{nodes:nodes as any,edges:[]}});
     setTimeout(()=>setSaveState('saved'),180);
   },[nodes,update]);
-  useEffect(()=>{const t=setTimeout(save,700);return()=>clearTimeout(t)},[nodes,save]);
+  useEffect(()=>{save();},[nodes,save]);
   useEffect(()=>onStatus({nodeCount:nodes.length,passed:layoutChecklistPassed(results)}),[nodes.length,results,onStatus]);
   const updateSelected=(patch:any)=>setNodes(ns=>ns.map(n=>n.id===selected?{...n,data:{...n.data,...patch}}:n));
   const remove=()=>{if(!selected)return;commit();setNodes(ns=>ns.filter(n=>n.id!==selected));setSelected(null)};
@@ -69,10 +69,10 @@ export default function LayoutBuilder({moduleId,record,update,onStatus}:{moduleI
       helpText="Drag an element from the left, then select it to edit its label, size and colour." />
     <div className="builder" ref={wrap}>
       <aside className="builder-left">
-        <div className="panel-h">Project brief</div><p className="small">{PROJECT_BRIEF}</p>
+        <div className="panel-h">Project brief</div><p className="small">{record.customBrief ?? PROJECT_BRIEF}</p>
         <div className="panel-h">Elements</div>
         {kinds.map(k=><button key={k} className="palette-item" draggable onDragStart={e=>onDragStart(e,k)} onClick={()=>add(k)}><Plus size={15}/><span>{LABELS[k]}</span></button>)}
-        <div className="note small">{moduleId==='wireframe'?'Use simple, meaningful labels. Arrange fields and buttons in the order a patient will use them.':'Plan one static screen or document. Add annotations that explain your size, position, font and colour choices.'}</div>
+        <div className="note small">{moduleId==='wireframe'?'Use simple, meaningful labels. Arrange fields and buttons in the order the user will use them.':'Plan one static screen or document. Add annotations that explain your size, position, font and colour choices.'}</div>
       </aside>
       <div className="builder-canvas" onDrop={onDrop} onDragOver={e=>{e.preventDefault();e.dataTransfer.dropEffect='copy'}}>
         <ReactFlow nodes={nodes} edges={edges} onNodesChange={onNodesChange} onEdgesChange={onEdgesChange} nodeTypes={nodeTypes}

@@ -5,6 +5,9 @@ import { mindmapLearnTabs, LearnTab } from '../../content/mindmap';
 import { flowchartLearnTabs } from '../../content/flowchart';
 import { FlowchartSequenceExample, FlowchartSymbolGuide } from '../FlowchartLearnVisuals';
 import { visualisationLearnTabs, wireframeLearnTabs } from '../../content/layoutTools';
+import { LearningResources } from '../LearningResources';
+import { GlossaryContent } from '../Glossary';
+import { ExamPractice } from '../ExamPractice';
 
 export default function LearnStep({ moduleId, setCanContinue }: StepProps) {
   const tabs: LearnTab[] =
@@ -12,7 +15,8 @@ export default function LearnStep({ moduleId, setCanContinue }: StepProps) {
     moduleId === 'flowchart' ? flowchartLearnTabs :
     moduleId === 'visualisation' ? visualisationLearnTabs : wireframeLearnTabs;
   const [active, setActive] = useState(tabs[0].id);
-  const [visited, setVisited] = useState<Set<string>>(() => new Set([tabs[0].id]));
+  const [visited, setVisited] = useState<Set<string>>(() => {try {const saved=JSON.parse(localStorage.getItem(`designcraft.read.v1.${moduleId}`)||'[]');return new Set([tabs[0].id,...(Array.isArray(saved)?saved.filter(x=>typeof x==='string'):[])]);}catch{return new Set([tabs[0].id]);}});
+  const [readError,setReadError] = useState(false);
 
   useEffect(() => { setCanContinue(true); }, [setCanContinue]);
 
@@ -29,13 +33,13 @@ export default function LearnStep({ moduleId, setCanContinue }: StepProps) {
             role="tab"
             aria-selected={t.id === active}
             className={`tab ${t.id === active ? 'active' : ''}`}
-            onClick={() => { setActive(t.id); setVisited((v) => new Set(v).add(t.id)); }}
+            onClick={() => { setActive(t.id); const next=new Set(visited).add(t.id);setVisited(next);try{localStorage.setItem(`designcraft.read.v1.${moduleId}`,JSON.stringify([...next]));setReadError(false);}catch{setReadError(true);} }}
           >
             {t.title}{visited.has(t.id) && t.id !== active ? ' ✓' : ''}
           </button>
         ))}
       </div>
-      <div role="tabpanel" aria-label={tab.title}>
+      <GlossaryContent><div role="tabpanel" aria-label={tab.title}>
         {tab.blocks.map((b, i) => (
           <div key={i}>
             {b.heading && <h3>{b.heading}</h3>}
@@ -46,10 +50,13 @@ export default function LearnStep({ moduleId, setCanContinue }: StepProps) {
             {b.note && <div className="note">{b.note}</div>}
           </div>
         ))}
-      </div>
+      </div></GlossaryContent>
       <p className="small muted" style={{ marginTop: 8, marginBottom: 0 }}>
         Sections read: {visited.size} of {tabs.length}
       </p>
+      {readError && <p className="feedback bad" role="alert">Reading progress could not be saved on this browser.</p>}
+      <LearningResources key={moduleId} tool={moduleId} />
+      <details className="read-more"><summary>Check this topic: five R050-style MCQs</summary><ExamPractice key={moduleId} tool={moduleId}/></details>
     </div>
   );
 }

@@ -1,3 +1,4 @@
+import { GlossaryContent } from '../Glossary';
 import { useEffect, useMemo, useState } from 'react';
 import { ClipboardCheck } from 'lucide-react';
 import { StepProps } from '../Journey';
@@ -54,7 +55,7 @@ export default function ReviewStep({ moduleId, record, update, setCanContinue }:
   const warns = results.filter((r) => r.status === 'warn').length;
 
   return (
-    <div className="card card-pad">
+    <GlossaryContent><div className="card card-pad">
       <div className="eyebrow"><ClipboardCheck size={12} style={{ verticalAlign: '-1px' }} /> Review</div>
       <h2>Your design against the checklist</h2>
       <p className="muted small">
@@ -78,6 +79,6 @@ export default function ReviewStep({ moduleId, record, update, setCanContinue }:
           </div>
         )}
       </div>
-    </div>
+    </div></GlossaryContent>
   );
 }

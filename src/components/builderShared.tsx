@@ -1,5 +1,6 @@
-import { ReactNode } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { ReactNode, createContext, useContext, useEffect, useState } from 'react';
+export const SaveWarningContext = createContext('');
+import { useNavigate, useLocation } from 'react-router-dom';
 import { toPng, toSvg } from 'html-to-image';
 import { getNodesBounds, getViewportForBounds, useReactFlow } from '@xyflow/react';
 import {
@@ -51,6 +52,10 @@ export interface ToolbarProps {
 export function BuilderToolbar(p: ToolbarProps) {
   const { zoomIn, zoomOut, fitView } = useReactFlow();
   const navigate = useNavigate();
+  const isProject = useLocation().pathname.startsWith('/projects/');
+  const projectWarning=useContext(SaveWarningContext);
+  const [storageWarning,setStorageWarning]=useState('');
+  useEffect(()=>{const h=(e:Event)=>setStorageWarning((e as CustomEvent<string>).detail);window.addEventListener('designcraft-storage-warning',h);return()=>window.removeEventListener('designcraft-storage-warning',h);},[]);
 
   const doExport = async (format: 'png' | 'svg') => {
     const el = document.querySelector('.builder-canvas') as HTMLElement | null;
@@ -70,13 +75,13 @@ export function BuilderToolbar(p: ToolbarProps) {
       <button className="icon-btn" data-tip="Save now" aria-label="Save now" onClick={p.onSave}><Save size={17} /></button>
       <button className="icon-btn" data-tip="Export as PNG" aria-label="Export as PNG image" onClick={() => doExport('png')} disabled={p.nodes.length === 0}><ImageDown size={17} /></button>
       <button className="icon-btn" data-tip="Export as SVG" aria-label="Export as SVG image" onClick={() => doExport('svg')} disabled={p.nodes.length === 0}><FileCode2 size={17} /></button>
-      <button className="icon-btn" data-tip="Print evidence view" aria-label="Open printable evidence view" onClick={() => navigate(`/evidence/${p.moduleId}`)}><Printer size={17} /></button>
+      {!isProject && <button className="icon-btn" data-tip="Print evidence view" aria-label="Open printable evidence view" onClick={() => navigate(`/evidence/${p.moduleId}`)}><Printer size={17} /></button>}
       <span className="toolbar-sep" aria-hidden="true" />
       <button className="icon-btn" data-tip="Start again" aria-label="Start this design again" onClick={p.onReset}><RotateCcw size={17} /></button>
       <span className="icon-btn" tabIndex={0} data-tip={p.helpText} aria-label="Help"><HelpCircle size={17} /></span>
       {p.extra}
       <span className="small muted" style={{ marginLeft: 'auto' }} role="status" aria-live="polite">
-        {p.saveState === 'saving' ? 'Saving…' : p.saveState === 'saved' ? 'All changes saved' : 'Progress saves automatically'}
+        {projectWarning || (!isProject && storageWarning) ? 'Not saved — see warning above' : p.saveState === 'saving' ? 'Saving…' : p.saveState === 'saved' ? 'All changes saved' : 'Progress saves automatically'}
       </span>
     </div>
   );

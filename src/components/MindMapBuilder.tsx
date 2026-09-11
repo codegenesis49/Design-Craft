@@ -91,11 +91,8 @@ export default function MindMapBuilder({ record, update, onStatus }: Props) {
   useEffect(() => {
     onStatus({ nodeCount: nodes.length, passed: checklistPassed(results) });
     setSaveState('saving');
-    const t = setTimeout(() => {
-      update({ artifactData: { nodes: nodes as any, edges: edges as any } });
-      setSaveState('saved');
-    }, 700);
-    return () => clearTimeout(t);
+    update({ artifactData: { nodes: nodes as any, edges: edges as any } });
+    setSaveState('saved');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [nodes, edges]);
 
@@ -201,7 +198,7 @@ export default function MindMapBuilder({ record, update, onStatus }: Props) {
       <div className="builder">
         <aside className="builder-left" aria-label="Brief and prompts">
           <div className="panel-h">Project brief</div>
-          <p className="small muted">{PROJECT_BRIEF}</p>
+          <p className="small muted">{record.customBrief ?? PROJECT_BRIEF}</p>
           <div className="panel-h">Building a {typeName} map</div>
           <button className="btn btn-secondary btn-sm" style={{ width: '100%', marginBottom: 7 }} onClick={() => addNode('central')} disabled={!!central} data-tip={central ? 'Your map already has a central node' : undefined}>
             <CircleDot size={15} /> Add central node

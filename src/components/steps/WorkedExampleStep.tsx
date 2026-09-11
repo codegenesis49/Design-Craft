@@ -1,3 +1,4 @@
+import { GlossaryContent } from '../Glossary';
 import { useEffect, useState } from 'react';
 import { Eye } from 'lucide-react';
 import { StepProps } from '../Journey';
@@ -144,7 +145,7 @@ export default function WorkedExampleStep({ moduleId, setCanContinue }: StepProp
         'The No route loops back so the user can try again — loops are fine when they are logically connected.',
       ];
   return (
-    <div className="card card-pad">
+    <GlossaryContent><div className="card card-pad">
       <div className="eyebrow"><Eye size={12} style={{ verticalAlign: '-1px' }} /> Worked example</div>
       <h2>{mindmap ? 'A Library mind map, done well' : layout ? `A ${wireframe?'high-fidelity wireframe':'visualisation diagram'}, done well` : 'A complete flowchart, done well'}</h2>
       <p className="muted small">
@@ -158,6 +159,6 @@ export default function WorkedExampleStep({ moduleId, setCanContinue }: StepProp
         </button>
         {showNotes && <ul style={{ marginTop: 10 }}>{notes.map((n, i) => <li key={i}>{n}</li>)}</ul>}
       </div>
-    </div>
+    </div></GlossaryContent>
   );
 }

@@ -1,0 +1,24 @@
+import { useEffect, useState } from 'react';
+import { ReactFlow, Background, Node, useNodesState, NodeResizer } from '@xyflow/react';
+import { SavedRecord } from '../types';
+import { BuilderToolbar } from './builderShared';
+import { useHistory } from '../hooks/useHistory';
+
+function MoodNode({data,selected}:{data:any;selected?:boolean}) {
+  return <div className="mood-node" style={{background:data.colour || '#fff',fontFamily:data.font || 'inherit'}}><NodeResizer isVisible={selected} minWidth={130} minHeight={100}/>{data.image&&<img src={data.image} alt={data.label || 'Mood-board inspiration'}/>}<span>{data.label}</span></div>;
+}
+const nodeTypes={layout:MoodNode};
+export default function MoodBoardBuilder({record,update}:{record:SavedRecord;update:(p:Partial<SavedRecord>)=>void}) {
+  const [nodes,setNodes,onNodesChange]=useNodesState((record.artifactData?.nodes ?? []) as Node[]);
+  const [selected,setSelected]=useState<string|null>(null),[error,setError]=useState('');
+  const history=useHistory<Node[]>();
+  const current=nodes.find(n=>n.id===selected);
+  useEffect(()=>{update({artifactData:{nodes:nodes as any,edges:[]}});},[nodes,update]);
+  function add(kind:string,image?:string) { history.commit(nodes);const id=crypto.randomUUID();setNodes(ns=>[...ns.map(n=>({...n,selected:false})),{id,type:'layout',position:{x:50+(ns.length%3)*260,y:60+Math.floor(ns.length/3)*220},style:{width:230,height:180},selected:true,data:{kind,label:kind==='colour'?'Colour inspiration':kind==='font'?'Typography sample':'Add a keyword or caption',colour:kind==='colour'?'#c8d2ff':'#ffffff',image,font:'Inter'}}]);setSelected(id); }
+  async function imageFile(file?:File){if(!file)return;setError('');if(!['image/png','image/jpeg','image/webp','image/gif'].includes(file.type)||file.size>800000){setError('Choose a PNG, JPG, WebP or GIF smaller than 800 KB. Smaller pictures leave room for more saved work.');return;}const reader=new FileReader();reader.onload=()=>add('image',String(reader.result));reader.onerror=()=>setError('This image could not be read.');reader.readAsDataURL(file);}
+  function edit(patch:Record<string,unknown>){setNodes(ns=>ns.map(n=>n.id===selected?{...n,data:{...n.data,...patch}}:n));}
+  return <><BuilderToolbar moduleId="visualisation" nodes={nodes} saveState="saved" helpText="Add inspiration, colours and typography. Drag cards to arrange them and select a card to edit or resize it." undo={()=>{const n=history.undo(nodes);if(n)setNodes(n);}} redo={()=>{const n=history.redo(nodes);if(n)setNodes(n);}} canUndo={history.canUndo} canRedo={history.canRedo} onSave={()=>update({artifactData:{nodes:nodes as any,edges:[]}})} onReset={()=>{if(confirm('Clear this mood board?')){history.commit(nodes);setNodes([]);}}} onAutoLayout={()=>{history.commit(nodes);setNodes(ns=>ns.map((n,i)=>({...n,position:{x:50+(i%3)*260,y:50+Math.floor(i/3)*220}})));}}/>
+    <div className="builder"><aside className="builder-left"><div className="panel-h">Your brief</div><p>{record.customBrief}</p><div className="panel-h">Inspiration cards</div>{['keyword','colour','font'].map(k=><button className="palette-item" key={k} onClick={()=>add(k)}>Add {k}</button>)}<label className="field-label">Add an image<input className="text-input" type="file" accept="image/png,image/jpeg,image/webp,image/gif" onChange={e=>{imageFile(e.target.files?.[0]);e.target.value='';}}/></label><p className="small muted">Use your own or appropriately licensed images. Avoid personal information.</p>{error&&<p className="feedback bad" role="alert">{error}</p>}</aside>
+    <div className="builder-canvas"><ReactFlow nodes={nodes} onNodesChange={onNodesChange} nodeTypes={nodeTypes} onNodeDragStart={()=>history.commit(nodes)} onSelectionChange={({nodes:ns})=>setSelected(ns[0]?.id??null)} onBeforeDelete={async p=>{history.commit(nodes);return p;}} fitView proOptions={{hideAttribution:true}}><Background/></ReactFlow></div>
+    <aside className="builder-right"><div className="panel-h">Selected card</div>{current?<><label>Caption / keywords<textarea className="text-input" rows={3} value={String(current.data.label || '')} onFocus={()=>history.commit(nodes)} onChange={e=>edit({label:e.target.value})}/></label><label>Background colour<input type="color" value={String(current.data.colour || '#ffffff')} onFocus={()=>history.commit(nodes)} onChange={e=>edit({colour:e.target.value})}/></label><label>Typeface<select className="text-input" value={String(current.data.font || 'Inter')} onFocus={()=>history.commit(nodes)} onChange={e=>edit({font:e.target.value})}>{['Inter','Georgia','monospace','Arial'].map(f=><option key={f}>{f}</option>)}</select></label><button className="btn btn-danger" onClick={()=>{history.commit(nodes);setNodes(ns=>ns.filter(n=>n.id!==selected));}}>Delete card</button></>:<p>Select a card to change its text, colour or typeface. Drag the corner handles to resize it.</p>}</aside></div></>;
+}

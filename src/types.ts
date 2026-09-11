@@ -55,6 +55,10 @@ export interface JustificationAnswers {
 }
 
 export interface SavedRecord {
+  /** Optional free-project brief; legacy lesson records keep the original brief. */
+  customBrief?: string;
+  quickCheckAnswers?: Record<string, number>;
+  quizDrafts?: { first?: Record<string,string>; retry?: Record<string,string> };
   schemaVersion: 1;
   studentId: null;
   classId: null;

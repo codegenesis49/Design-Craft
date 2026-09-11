@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { GlossaryText } from '../Glossary';
 import { GraduationCap, RefreshCcw } from 'lucide-react';
 import { StepProps } from '../Journey';
 import { mindmapQuiz } from '../../content/mindmap';
@@ -22,9 +23,9 @@ function ScoreRing({ score, total }: { score: number; total: number }) {
   );
 }
 
-function AttemptForm({ bank, seed, onSubmit, title }: { bank: QuizQuestion[]; seed: number; onSubmit: (a: Record<string, string>) => void; title: string }) {
+function AttemptForm({ bank, seed, onSubmit, title, draft, onDraft }: { draft?:Record<string,string>;onDraft:(a:Record<string,string>)=>void; bank: QuizQuestion[]; seed: number; onSubmit: (a: Record<string, string>) => void; title: string }) {
   const prepared = useMemo(() => prepareQuiz(bank, seed), [bank, seed]);
-  const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [answers, setAnswers] = useState<Record<string, string>>(draft ?? {});
   const allAnswered = prepared.every((q) => answers[q.id] !== undefined);
   return (
     <>
@@ -37,7 +38,7 @@ function AttemptForm({ bank, seed, onSubmit, title }: { bank: QuizQuestion[]; se
             <button
               key={opt}
               className={`option-row ${answers[q.id] === opt ? 'selected' : ''}`}
-              onClick={() => setAnswers((a) => ({ ...a, [q.id]: opt }))}
+              onClick={() => {const next={...answers,[q.id]:opt};setAnswers(next);onDraft(next);}}
               aria-pressed={answers[q.id] === opt}
             >
               {opt}
@@ -86,7 +87,7 @@ function AttemptReview({ bank, attempt, heading }: { bank: QuizQuestion[]; attem
             <p style={{ margin: '8px 0 4px', fontWeight: 600 }}>{qi + 1}. {q.prompt}</p>
             {!correct && <p className="small" style={{ margin: '0 0 2px' }}>Your answer: <span style={{ color: 'var(--red)' }}>{chosen}</span></p>}
             <p className="small" style={{ margin: '0 0 6px' }}>Correct answer: <strong>{q.options[q.answer]}</strong></p>
-            <p className="small muted" style={{ margin: 0 }}>{q.explanation}</p>
+            <p className="small muted" style={{ margin: 0 }}><GlossaryText text={q.explanation}/></p>
           </div>
         );
       })}
@@ -120,9 +121,9 @@ export default function QuizStep({ moduleId, record, update, setCanContinue }: S
     <div className="card card-pad">
       <div className="eyebrow"><GraduationCap size={12} style={{ verticalAlign: '-1px' }} /> Knowledge check</div>
 
-      {!firstScore && <AttemptForm bank={bank} seed={seed} onSubmit={submitFirst} title={`${moduleId === 'mindmap' ? 'Mind maps' : moduleId === 'flowchart' ? 'Flowcharts' : moduleId === 'visualisation' ? 'Visualisation diagrams' : 'Wireframes'}: knowledge check`} />}
+      {!firstScore && <AttemptForm draft={record.quizDrafts?.first} onDraft={first=>update({quizDrafts:{...record.quizDrafts,first}})} bank={bank} seed={seed} onSubmit={submitFirst} title={`${moduleId === 'mindmap' ? 'Mind maps' : moduleId === 'flowchart' ? 'Flowcharts' : moduleId === 'visualisation' ? 'Visualisation diagrams' : 'Wireframes'}: knowledge check`} />}
 
-      {firstScore && retrying && <AttemptForm bank={bank} seed={seed + 1} onSubmit={submitRetry} title="Retry: knowledge check" />}
+      {firstScore && retrying && <AttemptForm draft={record.quizDrafts?.retry} onDraft={retry=>update({quizDrafts:{...record.quizDrafts,retry}})} bank={bank} seed={seed + 1} onSubmit={submitRetry} title="Retry: knowledge check" />}
 
       {firstScore && !retrying && (
         <>

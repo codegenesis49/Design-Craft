@@ -111,7 +111,7 @@ export default function Journey({ moduleId }: { moduleId: ModuleId }) {
           </nav>
         )}
         <div className="journey-body">
-          {body}
+          <div key={`${moduleId}-${step.id}`}>{body}</div>
           <div className="journey-footer no-print">
             <button className="btn btn-secondary" onClick={() => goTo(current - 1)} disabled={current === 0}>
               <ArrowLeft size={16} /> Back

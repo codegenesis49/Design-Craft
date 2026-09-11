@@ -9,6 +9,7 @@ import '@fontsource/space-grotesk/500.css';
 import '@fontsource/space-grotesk/700.css';
 import '@xyflow/react/dist/style.css';
 import './styles.css';
+import './enhancements.css';
 import App from './App';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

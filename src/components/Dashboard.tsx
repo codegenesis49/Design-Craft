@@ -3,6 +3,7 @@ import { Network, GitBranch, LayoutTemplate, Image, Palette, ArrowRight, FileChe
 import { dataService } from '../data/dataService';
 import { PROJECT_BRIEF, SavedRecord } from '../types';
 import { stepTitles, totalSteps } from './journeySteps';
+import { toolNames } from '../data/projects';
 
 const AVAILABLE = [
   {
@@ -67,6 +68,7 @@ export default function Dashboard() {
           <p className="small muted" style={{ marginBottom: 0 }}>{PROJECT_BRIEF}</p>
         </div>
       </section>
+      <div className="note project-actions"><strong>Keep every design</strong><span>Create and reopen your own projects, including mood boards.</span><Link className="btn btn-primary" to="/projects">My Projects</Link><Link className="btn btn-secondary" to="/resources">Visual examples</Link><Link className="btn btn-secondary" to="/assessment">End-of-module assessment</Link></div>
 
       {inProgress.length > 0 && (
         <>
@@ -77,7 +79,7 @@ export default function Dashboard() {
             {inProgress.map((r) => (
               <div key={r.moduleId} className="card module-card">
                 <span className="badge badge-amber"><Clock3 size={12} /> In progress</span>
-                <h3 style={{ margin: 0 }}>{r.moduleId === 'mindmap' ? 'Mind Maps' : 'Flowcharts'}</h3>
+                <h3 style={{ margin: 0 }}>{toolNames[r.moduleId]}</h3>
                 <p className="small muted" style={{ margin: 0 }}>
                   Next up: {stepTitles(r.moduleId)[Math.min(r.maxStep, totalSteps(r.moduleId) - 1)]}
                 </p>
@@ -126,18 +128,20 @@ export default function Dashboard() {
       </div>
 
       <div className="section-title">
-        <h2>Coming later</h2>
-        <span className="muted small">These modules unlock in a future release</span>
+        <h2>Mood boards</h2>
+        <span className="muted small">Create now in My Projects; a guided lesson is coming later</span>
       </div>
       <div className="grid-modules">
         {UPCOMING.map((m) => (
-          <div key={m.title} className="card module-card upcoming" aria-disabled="true">
+          <div key={m.title} className="card module-card">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span className="glyph">{m.icon}</span>
-              <span className="badge badge-grey">Coming later</span>
+              <span className="badge badge-teal">Project editor available</span>
             </div>
             <h3 style={{ margin: 0 }}>{m.title}</h3>
             <p className="small muted" style={{ margin: 0 }}>{m.desc}</p>
+            <Link className="btn btn-primary" to="/projects">Create a mood board</Link>
+            <Link className="btn btn-secondary" to="/resources?tool=moodboard">Examples and MCQs</Link>
           </div>
         ))}
       </div>
@@ -155,7 +159,7 @@ export default function Dashboard() {
             <div className="saved-row" key={r.moduleId}>
               <FileCheck2 size={18} color="var(--primary-deep)" aria-hidden="true" />
               <div style={{ flex: 1, minWidth: 0 }}>
-                <strong>{r.moduleId === 'mindmap' ? 'Mind map' : 'Flowchart'}</strong>
+                <strong>{toolNames[r.moduleId]}</strong>
                 <span className="muted small"> · Hospital appointment system</span>
                 <div className="small muted">
                   {r.selectedMindMapType ? `Type: ${r.selectedMindMapType === 'tunnel' ? 'Tunnel Timeline' : r.selectedMindMapType[0].toUpperCase() + r.selectedMindMapType.slice(1)} · ` : ''}
